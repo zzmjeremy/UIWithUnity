@@ -18,14 +18,19 @@ public class PlayerController : MonoBehaviour
         inputManager.OnMove.AddListener(MovePlayer);
         inputManager.OnJump.AddListener(Jump);
         rb = GetComponent<Rigidbody>();
-        rb.maxLinearVelocity = maxSpeed;
         freeLookCamera = FindAnyObjectByType<CinemachineCamera>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         transform.forward = freeLookCamera.transform.forward;
         transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
+
+        Vector3 velocity = rb.linearVelocity;
+        float clampedX = Mathf.Clamp(velocity.x, -maxSpeed, maxSpeed);
+        float clampedZ = Mathf.Clamp(velocity.z, -maxSpeed, maxSpeed);
+        rb.linearVelocity = new Vector3(clampedX, velocity.y, clampedZ);
+
         if (rb.linearVelocity.magnitude > 0.1f)
         {
             Vector3 friction = -rb.linearVelocity.normalized * (frictionCoeff * Time.deltaTime);
