@@ -7,7 +7,7 @@ public class InputManager : MonoBehaviour
     public UnityEvent<Vector2> OnMove = new();
     public UnityEvent OnJump = new();
     public UnityEvent OnDash = new();
-    void Update()
+    void FixedUpdate()
     {
         Vector2 input = Vector2.zero;
         if (Input.GetKey(KeyCode.W))
@@ -35,6 +35,6 @@ public class InputManager : MonoBehaviour
         {
             OnDash?.Invoke();
         }
-        OnMove?.Invoke(input);
+        OnMove?.Invoke(input.normalized);
     }
 }

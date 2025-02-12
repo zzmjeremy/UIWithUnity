@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float acceleration;
     [SerializeField] private float jumpForce;
     [SerializeField] private float dashForce;
-    [SerializeField] private float frictionCoeff;
+    [SerializeField] private float airControl;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private int jumpCount;
@@ -46,14 +46,6 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = new Vector3(clampedX, velocity.y, clampedZ);
         }
         
-        if (rb.linearVelocity.magnitude > 0.2f)
-        {
-            Vector3 friction = -rb.linearVelocity.normalized * (frictionCoeff * Time.deltaTime);
-            friction = new Vector3(friction.x, 0f, friction.z);
-            rb.AddForce(friction, ForceMode.VelocityChange);
-            //if (Vector3.Dot(rb.linearVelocity, rb.linearVelocity + friction) < 0) rb.linearVelocity = Vector3.zero;
-        }
-        
     }
 
     private void Update()
@@ -66,9 +58,19 @@ public class PlayerController : MonoBehaviour
     private bool IsTouchingLeftWall() => Physics.Raycast(transform.position, -transform.right, out leftHit, 1.1f, wallLayer);
     private void MovePlayer(Vector2 dirn)
     {
-        Vector3 localDirection = new Vector3(dirn.x, 0f, dirn.y);
-        Vector3 worldDirection = transform.TransformDirection(localDirection);
-        rb.AddForce(worldDirection * acceleration);
+        if (IsTouchingGround())
+        {
+            Vector3 localDirection = new Vector3(dirn.x, 0f, dirn.y);
+            Vector3 worldDirection = transform.TransformDirection(localDirection);
+            rb.AddForce(worldDirection * acceleration); 
+        }
+        else
+        {
+            Vector3 localDirection = new Vector3(dirn.x, 0f, dirn.y) * airControl;
+            Vector3 worldDirection = transform.TransformDirection(localDirection);
+            rb.AddForce(worldDirection * acceleration); 
+        }
+        
     }
 
     private void Jump()
@@ -80,13 +82,11 @@ public class PlayerController : MonoBehaviour
         }
         if(IsTouchingRightWall())
         {
-            Debug.Log($"Right Wall:{rightHit.normal}");
             jumpCount = 0;
             jumpDir = -transform.right + rightHit.collider.transform.up + transform.forward*2;
         }
         if(IsTouchingLeftWall())
         {
-            Debug.Log($"Left Wall:{leftHit.normal}");
             jumpCount = 0;
             jumpDir = transform.right + leftHit.collider.transform.up + transform.forward*2;
         }
@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
     {
         isDashing = true;
         rb.linearVelocity = Vector3.zero;
-        rb.AddForce(transform.forward * jumpForce, ForceMode.Impulse);
+        rb.AddForce(transform.forward * dashForce, ForceMode.Impulse);
     }
 
     private void OnDrawGizmos()
