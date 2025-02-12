@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private CinemachineCamera freeLookCamera;
     private bool isDashing;
-    
+
     private RaycastHit rightHit;
     private RaycastHit leftHit;
     private void Awake()
@@ -41,11 +41,16 @@ public class PlayerController : MonoBehaviour
         else
         {
             Vector3 velocity = rb.linearVelocity;
-            float clampedX = Mathf.Clamp(velocity.x, -maxSpeed, maxSpeed);
-            float clampedZ = Mathf.Clamp(velocity.z, -maxSpeed, maxSpeed);
-            rb.linearVelocity = new Vector3(clampedX, velocity.y, clampedZ);
+            Vector2 horizontalVelocity = new Vector2(velocity.x, velocity.z);
+
+            if (horizontalVelocity.magnitude > maxSpeed)
+            {
+                horizontalVelocity = horizontalVelocity.normalized * maxSpeed;
+            }
+
+            rb.linearVelocity = new Vector3(horizontalVelocity.x, velocity.y, horizontalVelocity.y);
         }
-        
+
     }
 
     private void Update()
@@ -54,49 +59,50 @@ public class PlayerController : MonoBehaviour
     }
 
     private bool IsTouchingGround() => Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f, groundLayer);
-    private bool IsTouchingRightWall() => Physics.Raycast(transform.position, transform.right, out rightHit, 1.1f, wallLayer);
-    private bool IsTouchingLeftWall() => Physics.Raycast(transform.position, -transform.right, out leftHit, 1.1f, wallLayer);
+    // private bool IsTouchingRightWall() => Physics.Raycast(transform.position, transform.right, out rightHit, 1.1f, wallLayer);
+    // private bool IsTouchingLeftWall() => Physics.Raycast(transform.position, -transform.right, out leftHit, 1.1f, wallLayer);
     private void MovePlayer(Vector2 dirn)
     {
+        Vector3 direction = new Vector3(dirn.x, 0f, dirn.y) ;
+        // Vector3 worldDirection = transform.TransformDirection(localDirection);
+        Quaternion rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
+        Vector3 reorientedDirection = rotation * direction;
         if (IsTouchingGround())
         {
-            Vector3 localDirection = new Vector3(dirn.x, 0f, dirn.y);
-            Vector3 worldDirection = transform.TransformDirection(localDirection);
-            rb.AddForce(worldDirection * acceleration); 
+            rb.AddForce(reorientedDirection * acceleration);
         }
         else
         {
-            Vector3 localDirection = new Vector3(dirn.x, 0f, dirn.y) * airControl;
-            Vector3 worldDirection = transform.TransformDirection(localDirection);
-            rb.AddForce(worldDirection * acceleration); 
+            rb.AddForce(reorientedDirection * acceleration * airControl);
         }
-        
+
     }
 
     private void Jump()
     {
+        Debug.Log("Should Jump");
         Vector3 jumpDir = Vector3.up;
         if (IsTouchingGround())
         {
             jumpCount = 0;
         }
-        if(IsTouchingRightWall())
-        {
-            jumpCount = 0;
-            jumpDir = -transform.right + rightHit.collider.transform.up + transform.forward*2;
-        }
-        if(IsTouchingLeftWall())
-        {
-            jumpCount = 0;
-            jumpDir = transform.right + leftHit.collider.transform.up + transform.forward*2;
-        }
-        
+        // if(IsTouchingRightWall())
+        // {
+        //     jumpCount = 0;
+        //     jumpDir = -transform.right + rightHit.collider.transform.up + transform.forward*2;
+        // }
+        // if(IsTouchingLeftWall())
+        // {
+        //     jumpCount = 0;
+        //     jumpDir = transform.right + leftHit.collider.transform.up + transform.forward*2;
+        // }
+
         if(jumpCount < doubleJump)
         {
             rb.AddForce(jumpDir * jumpForce, ForceMode.Impulse);
             jumpCount++;
         }
-        
+
     }
 
     private void Dash()
@@ -108,23 +114,23 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (IsTouchingLeftWall())
-        {
-            Debug.DrawRay(transform.position, -transform.right * 1.1f, Color.green);
-        }
-        else
-        {
-            Debug.DrawRay(transform.position, -transform.right * 1.1f, Color.red);
-        }
-        
-        if (IsTouchingRightWall())
-        {
-            Debug.DrawRay(transform.position, transform.right * 1.1f, Color.green);
-        }
-        else
-        {
-            Debug.DrawRay(transform.position, transform.right * 1.1f, Color.red);
-        }
-        
+        // if (IsTouchingLeftWall())
+        // {
+        //     Debug.DrawRay(transform.position, -transform.right * 1.1f, Color.green);
+        // }
+        // else
+        // {
+        //     Debug.DrawRay(transform.position, -transform.right * 1.1f, Color.red);
+        // }
+
+        // if (IsTouchingRightWall())
+        // {
+        //     Debug.DrawRay(transform.position, transform.right * 1.1f, Color.green);
+        // }
+        // else
+        // {
+        //     Debug.DrawRay(transform.position, transform.right * 1.1f, Color.red);
+        // }
+
     }
 }
