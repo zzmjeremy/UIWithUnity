@@ -411,7 +411,6 @@ GameObject:
   - component: {fileID: 286123809}
   - component: {fileID: 286123813}
   - component: {fileID: 286123812}
-  - component: {fileID: 286123811}
   - component: {fileID: 286123810}
   m_Layer: 0
   m_Name: Capsule
@@ -450,29 +449,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   color: {r: 1, g: 0.56652045, b: 0, a: 1}
   mr: {fileID: 286123812}
---- !u!136 &286123811
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 286123808}
-  m_Material: {fileID: 13400000, guid: 12b16e18a22f90749b7a8eba968933a3, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &286123812
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1012,9 +988,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputManager: {fileID: 1623929139}
   maxSpeed: 15
-  acceleration: 7
+  acceleration: 12
   jumpForce: 15
-  frictionCoeff: 8
+  dashForce: 25
+  frictionCoeff: 18
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -1043,7 +1020,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!1 &630919838
 GameObject:
@@ -1669,6 +1646,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   OnJump:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDash:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &1623929140
