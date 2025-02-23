@@ -75,5 +75,9 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # End of https://www.toptal.com/developers/gitignore/api/unity
-.idea/.idea.A4-Deliverable/.idea
-.idea/.idea.Platformer-Studio-A2-Deliverable/.idea
+
+# Jetbrains Rider
+.idea/
+
+# Vscode
+.vscode/

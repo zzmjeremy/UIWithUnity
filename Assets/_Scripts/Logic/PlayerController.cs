@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private InputManager inputManager;
+    [Header("Movement Parameters")]
     [SerializeField] private float maxSpeed;
     [SerializeField] private float acceleration;
     [SerializeField] private float jumpForce;
     [SerializeField] private float dashForce;
     [SerializeField] private float airControl;
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private LayerMask wallLayer;
     [SerializeField] private int jumpCount;
+
     private readonly int doubleJump = 2;
     private Rigidbody rb;
     private CinemachineCamera freeLookCamera;
@@ -59,12 +61,10 @@ public class PlayerController : MonoBehaviour
     }
 
     private bool IsTouchingGround() => Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f, groundLayer);
-    // private bool IsTouchingRightWall() => Physics.Raycast(transform.position, transform.right, out rightHit, 1.1f, wallLayer);
-    // private bool IsTouchingLeftWall() => Physics.Raycast(transform.position, -transform.right, out leftHit, 1.1f, wallLayer);
+
     private void MovePlayer(Vector2 dirn)
     {
         Vector3 direction = new Vector3(dirn.x, 0f, dirn.y) ;
-        // Vector3 worldDirection = transform.TransformDirection(localDirection);
         Quaternion rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
         Vector3 reorientedDirection = rotation * direction;
         if (IsTouchingGround())
@@ -86,16 +86,6 @@ public class PlayerController : MonoBehaviour
         {
             jumpCount = 0;
         }
-        // if(IsTouchingRightWall())
-        // {
-        //     jumpCount = 0;
-        //     jumpDir = -transform.right + rightHit.collider.transform.up + transform.forward*2;
-        // }
-        // if(IsTouchingLeftWall())
-        // {
-        //     jumpCount = 0;
-        //     jumpDir = transform.right + leftHit.collider.transform.up + transform.forward*2;
-        // }
 
         if(jumpCount < doubleJump)
         {
@@ -110,27 +100,5 @@ public class PlayerController : MonoBehaviour
         isDashing = true;
         rb.linearVelocity = Vector3.zero;
         rb.AddForce(transform.forward * dashForce, ForceMode.Impulse);
-    }
-
-    private void OnDrawGizmos()
-    {
-        // if (IsTouchingLeftWall())
-        // {
-        //     Debug.DrawRay(transform.position, -transform.right * 1.1f, Color.green);
-        // }
-        // else
-        // {
-        //     Debug.DrawRay(transform.position, -transform.right * 1.1f, Color.red);
-        // }
-
-        // if (IsTouchingRightWall())
-        // {
-        //     Debug.DrawRay(transform.position, transform.right * 1.1f, Color.green);
-        // }
-        // else
-        // {
-        //     Debug.DrawRay(transform.position, transform.right * 1.1f, Color.red);
-        // }
-
     }
 }
