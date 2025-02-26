@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -68,6 +67,7 @@ public class PlayerController : MonoBehaviour
     {
         int contactCount = collision.contactCount;
         float angle = collision.contacts.Sum(contact => Vector3.Angle(contact.normal, Vector3.up)) / contactCount;
+        // swapping out materials to avoid sticking on the walls
         col.material = angle > 45 ? smooth : rough;
     }
 
