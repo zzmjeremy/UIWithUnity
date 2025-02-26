@@ -1017,9 +1017,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 0.5
+  m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: -0.5, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &511674245
 Transform:
   m_ObjectHideFlags: 0
@@ -1057,10 +1057,9 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  jumpCount: 1
+  jumpCount: 0
+  rough: {fileID: 13400000, guid: d2f2a86b040bac74d907a762002a415f, type: 2}
+  smooth: {fileID: 13400000, guid: 12b16e18a22f90749b7a8eba968933a3, type: 2}
 --- !u!54 &511674248
 Rigidbody:
   m_ObjectHideFlags: 0

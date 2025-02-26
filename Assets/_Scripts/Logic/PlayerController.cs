@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -14,11 +15,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float airControl;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private int jumpCount;
+    [Header("Physics Materials")]
+    [SerializeField] private PhysicsMaterial rough;
+    [SerializeField] private PhysicsMaterial smooth;
 
     private readonly int doubleJump = 2;
     private Rigidbody rb;
     private CinemachineCamera freeLookCamera;
     private bool isDashing;
+    private Collider col;
 
     private RaycastHit rightHit;
     private RaycastHit leftHit;
@@ -28,7 +33,12 @@ public class PlayerController : MonoBehaviour
         inputManager.OnJump.AddListener(Jump);
         inputManager.OnDash.AddListener(Dash);
         rb = GetComponent<Rigidbody>();
+        col = GetComponent<Collider>();
         freeLookCamera = FindAnyObjectByType<CinemachineCamera>();
+    }
+    private void Update()
+    {
+        transform.rotation = Quaternion.Euler(0, freeLookCamera.transform.rotation.eulerAngles.y, 0);
     }
 
     private void FixedUpdate()
@@ -52,12 +62,13 @@ public class PlayerController : MonoBehaviour
 
             rb.linearVelocity = new Vector3(horizontalVelocity.x, velocity.y, horizontalVelocity.y);
         }
-
     }
 
-    private void Update()
+    private void OnCollisionStay(Collision collision)
     {
-        transform.rotation = Quaternion.Euler(0, freeLookCamera.transform.rotation.eulerAngles.y, 0);
+        int contactCount = collision.contactCount;
+        float angle = collision.contacts.Sum(contact => Vector3.Angle(contact.normal, Vector3.up)) / contactCount;
+        col.material = angle > 45 ? smooth : rough;
     }
 
     private bool IsTouchingGround() => Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1.1f, groundLayer);
@@ -80,7 +91,6 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        Debug.Log("Should Jump");
         Vector3 jumpDir = Vector3.up;
         if (IsTouchingGround())
         {
@@ -89,10 +99,11 @@ public class PlayerController : MonoBehaviour
 
         if(jumpCount < doubleJump)
         {
+            // resetting vertical velocity before applying jump force
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
             rb.AddForce(jumpDir * jumpForce, ForceMode.Impulse);
             jumpCount++;
         }
-
     }
 
     private void Dash()
