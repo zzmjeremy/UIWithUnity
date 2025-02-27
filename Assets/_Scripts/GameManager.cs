@@ -8,6 +8,7 @@ public class GameManager : SingletonMonoBehavior<GameManager>
 
     protected override void Awake()
     {
+        base.Awake();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         scoreText = GetComponent<TextMeshProUGUI>();
