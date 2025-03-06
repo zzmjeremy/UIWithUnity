@@ -11,7 +11,6 @@ public class GameManager : SingletonMonoBehavior<GameManager>
         base.Awake();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        scoreText = GetComponent<TextMeshProUGUI>();
     }
 
     public void IncreaseScore()
